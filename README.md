@@ -1,8 +1,11 @@
 # 対訳文庫 (Taiyaku Bunko)
 
-著作権の切れた海外の古典を、**原文と新しい日本語訳の対訳**で無料公開する静的サイトです。
+パブリックドメインの海外古典を、**原文と新しい日本語訳の対訳**で無料公開する静的サイトです。
+
+公開URL: <https://hpm8vw6jrd-star.github.io/>
 
 ## 収録作品
+
 - フランツ・カフカ『変身』
 - シャーロット・パーキンス・ギルマン『黄色い壁紙』
 - W・W・ジェイコブズ『猿の手』
@@ -12,33 +15,65 @@
 - ケイト・ショパン『一時間の物語』
 
 ## 構成
-```
+
+```text
 taiyaku-bunko/
-├── index.html              # 蔵書一覧（トップ）
-├── style.css                # 共通スタイル
-├── reader.js                # 対訳リーダー（表示切替・文字サイズ・保存）
-├── henshin.html             # 『変身』読書ページ
-├── henshin-data.js          # 『変身』の対訳データ（window.BOOK）
-├── hour.html                # 『一時間の物語』読書ページ
-├── hour-data.js             # 『一時間の物語』の対訳データ
-└── index.html               # 蔵書一覧（トップ）
+├── index.html              # 検索・絞り込み対応の蔵書一覧
+├── site.js                 # テーマ切替・蔵書検索・共通UI
+├── style.css               # 共通デザイン
+├── DESIGN.md               # getdesign.md / Notionを基にしたデザイン正本
+├── reader.js               # 対訳表示・文字サイズ・保存・しおり・進捗
+├── <slug>.html             # 作品ページ
+├── <slug>-data.js          # 対訳データ（window.BOOK）
+├── about.html              # 編集方針
+├── privacy.html            # 解析・広告・Cookie方針
+├── 404.html                # GitHub Pages用404
+├── sitemap.xml / robots.txt
+└── assets/
+    ├── favicon.svg
+    ├── og-cover.svg
+    └── og-cover.png
 ```
+
+## デザイン
+
+`getdesign.md` の Notion design analysis が示す warm minimalism / serif headings / soft surfaces を、オンライン文庫向けに翻案しています。色・書体・余白・コンポーネントの正本は `DESIGN.md` です。画面用にはライト／ダークの両テーマがあります。
 
 ## ローカルで見る
-`index.html` をブラウザで開くだけで動きます（データは `data.js` に埋め込み済みのため、サーバー不要）。
 
-## 公開（GitHub Pages）
-1. このフォルダを GitHub リポジトリの内容として push する。
-2. リポジトリの **Settings → Pages** で、Source を `main` ブランチの `/ (root)` に設定。
-3. 数分後 `https://<ユーザー名>.github.io/<リポジトリ名>/` で公開されます。
+`index.html` をブラウザで開くだけで動きます。データは `*-data.js` に埋め込まれているため、ローカルサーバーは不要です。
 
-## ライセンス / 権利
-- 原文テキスト（英訳）はパブリックドメイン（Project Gutenberg）。
-- 日本語訳は本サイトのために新しく作成（AIの支援により翻訳）。自由に閲覧できます。
+## 作品を追加する
 
-## 作品を追加するには
-1. `<作品ID>.html` を既存の読書ページを雛形として作る。
-2. 対訳データを `<作品ID>-data.js` として置く（`window.BOOK = { id, title, author, ..., parts:[{label, paras:[{ja,en}]}] }`）。
-3. 読書ページ末尾で、対応する `<作品ID>-data.js` と `reader.js` をこの順に読み込む。
-4. トップ `index.html` の `.shelf` にカードを1枚追加する。
-5. `sitemap.xml` に作品ページを追加し、`候補作品リスト.md` の「公開済み」を更新する。
+1. `<slug>.html` を既存作品から作り、固有の title / description / canonical / OGP / JSON-LD を設定する。
+2. `<slug>-data.js` に `window.BOOK` を置く。
+3. `index.html` の `#library-list` に `.work-entry` を追加する。検索対象語は `data-search`、作家絞り込みは `data-author`、並び順は `data-order` に入れる。
+4. トップページの JSON-LD `ItemList` と作品数を更新する。
+5. `sitemap.xml` と本READMEの作品一覧を更新する。
+6. モバイル幅とデスクトップ幅で表示を確認する。
+
+## SEO
+
+- 各ページに固有の title / description / canonical / OGP を設定。
+- トップは `WebSite` + `CollectionPage` + `ItemList`、作品は `Book` の JSON-LD を掲載。
+- `sitemap.xml` に `lastmod` を記録。
+- 1200×630のOG画像、favicon、Web App Manifestを配信。
+- 作品名と作家名はJavaScript生成だけにせず、HTML本文にも保持する。
+
+## Google AdSense
+
+AdSense審査前の準備として、プライバシーポリシーと空時非表示の広告予定領域を用意しています。実際の配信開始にはAdSenseアカウントのサイト登録と、アカウント固有の `ca-pub-...` が必要です。
+
+AdSense 登録用の公開URLは、パスを含まないユーザーサイト `hpm8vw6jrd-star.github.io` のルートを使用します。
+
+有効化時は次を行います。
+
+1. AdSenseのサイト登録で表示された公式コードを、全HTMLの `head` にそのまま追加する。
+2. AdSenseが示す行をルートの `ads.txt` に追加する。
+3. `privacy.html` の「導入を予定」を現在形へ更新する。
+4. Auto adsを利用し、本文や操作バーに重ならないことをモバイルでも確認する。
+
+## 権利
+
+- 原文テキストは、個別に著作権保護期間と出典を確認したパブリックドメイン作品です。
+- 日本語訳は本サイトのために新しく作成し、AIの支援を利用したことを明記しています。
