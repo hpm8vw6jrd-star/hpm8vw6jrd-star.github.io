@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f4f1ea"/>
+  <path d="M70 70h1060v490H70z" fill="none" stroke="#d1cbc0" stroke-width="2"/>
+  <path d="M742 70v490" stroke="#d1cbc0" stroke-width="2"/>
+  <text x="112" y="145" font-family="Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="4" fill="#7a756c">PUBLIC DOMAIN · BILINGUAL LIBRARY</text>
+  <text x="108" y="290" font-family="Yu Mincho, serif" font-size="94" font-weight="500" letter-spacing="10" fill="#1d1c19">対訳文庫</text>
+  <text x="112" y="360" font-family="Yu Mincho, serif" font-size="31" fill="#55514a">海外古典を、原文と日本語訳で。</text>
+  <text x="112" y="493" font-family="Georgia, serif" font-size="22" font-style="italic" fill="#315f75">Taiyaku Bunko</text>
+  <rect x="825" y="140" width="220" height="300" fill="#fbfaf6" stroke="#1d1c19" stroke-width="2"/>
+  <path d="M935 140v300" stroke="#d1cbc0" stroke-width="2"/>
+  <text x="935" y="312" text-anchor="middle" font-family="Yu Mincho, serif" font-size="72" fill="#315f75">対</text>
+  <text x="935" y="482" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" letter-spacing="3" fill="#7a756c">READ · COMPARE · DISCOVER</text>
+</svg>
+
