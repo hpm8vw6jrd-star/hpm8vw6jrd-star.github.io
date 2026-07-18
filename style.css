@@ -237,6 +237,7 @@ main.reader { max-width: var(--readingw); margin: 0 auto; padding: 42px 24px 112
 .para .col:first-child { padding-left: 0; border-right: 1px solid var(--hairline); }
 .para .col:last-child { padding-right: 0; }
 #reader .col { display: none; }
+.reader .poem-lines { white-space: pre-line; }
 .para .lang-ja { color: var(--ink); font-family: var(--font-serif-ja); }
 .para .col:not(.lang-ja) { color: var(--en); font-family: var(--font-serif-en); font-size: .94em; line-height: 1.9; }
 .column-label { display: none; }
@@ -333,4 +334,3 @@ body[data-fs="xl"] main.reader { font-size: 21px; }
   body { background: #fff; color: #111; }
   main.reader { max-width: none; }
 }
-

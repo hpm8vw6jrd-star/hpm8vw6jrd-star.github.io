@@ -3,7 +3,7 @@
   var B = window.BOOK;
   if (!B) { document.body.innerHTML = "<p style='padding:2rem'>データを読み込めませんでした。</p>"; return; }
 
-  var LANGNAME = { ja: "日本語", en: "英語", de: "ドイツ語", fr: "フランス語", zh: "中国語", ko: "韓国語", hi: "ヒンディー語" };
+  var LANGNAME = { ja: "日本語", en: "英語", de: "ドイツ語", fr: "フランス語", ru: "ロシア語", zh: "中国語", ko: "韓国語", hi: "ヒンディー語" };
   var langs = B.langs || Object.keys(B.parts[0].paras[0]);
   var orig = B.origLangCode;
   var bid = B.id || "x";
@@ -65,7 +65,7 @@
     p.paras.forEach(function (pr) {
       html += '<div class="para" data-idx="' + gi + '">';
       langs.forEach(function (c) {
-        html += '<div class="col lang-' + c + '" lang="' + c + '">' +
+        html += '<div class="col lang-' + c + (B.format === "poetry" ? ' poem-lines' : '') + '" lang="' + c + '">' +
           '<span class="column-label" aria-hidden="true">' + esc(label(c)) + '</span>' + esc(pr[c] || "") + '</div>';
       });
       html += '</div>';
