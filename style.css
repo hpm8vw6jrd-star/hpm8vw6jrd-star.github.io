@@ -164,7 +164,16 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .work-author small { display: block; margin-top: 3px; color: var(--ink-faint); font-family: var(--font-serif-en); font-size: 10px; font-style: italic; }
 .work-meta { grid-column: 2; display: flex; align-items: center; gap: 10px; color: var(--ink-muted); font-size: 10px; letter-spacing: .05em; }
 .work-meta span + span::before { content: "/"; margin-right: 10px; color: var(--hairline); }
-.work-arrow { grid-column: 3; align-self: end; color: var(--ink-muted); font-size: 19px; transition: transform .18s ease, color .18s ease; }
+.work-arrow {
+  grid-column: 3;
+  grid-row: 3;
+  align-self: center;
+  justify-self: end;
+  color: var(--ink-muted);
+  font-size: 19px;
+  line-height: 1;
+  transition: transform .18s ease, color .18s ease;
+}
 .work-link:hover .work-arrow { color: var(--accent); transform: translateX(4px); }
 .empty-state { margin-top: 24px; padding: 70px 24px; border: 1px solid var(--hairline); text-align: center; }
 .empty-state p { margin: 0 0 6px; font-family: var(--font-serif-ja); font-size: 20px; }
@@ -324,3 +333,4 @@ body[data-fs="xl"] main.reader { font-size: 21px; }
   body { background: #fff; color: #111; }
   main.reader { max-width: none; }
 }
+
