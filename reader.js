@@ -3,11 +3,18 @@
   var B = window.BOOK;
   if (!B) { document.body.innerHTML = "<p style='padding:2rem'>データを読み込めませんでした。</p>"; return; }
 
-  var LANGNAME = { ja: "日本語", en: "英語", de: "ドイツ語", fr: "フランス語", zh: "中国語", ko: "韓国語", hi: "ヒンディー語" };
+  var LANGNAME = { ja: "日本語", en: "英語", de: "ドイツ語", fr: "フランス語", ru: "ロシア語", zh: "中国語", ko: "韓国語", hi: "ヒンディー語" };
   var langs = B.langs || Object.keys(B.parts[0].paras[0]);
   var orig = B.origLangCode;
   var bid = B.id || "x";
   function label(code) { return code === orig ? "原文" : (LANGNAME[code] || code); }
+
+  var progress = document.createElement("div");
+  progress.className = "reading-progress";
+  progress.setAttribute("aria-hidden", "true");
+  progress.innerHTML = '<span id="reading-progress-bar"></span>';
+  document.body.insertBefore(progress, document.body.firstChild);
+  var progressBar = document.getElementById("reading-progress-bar");
 
   document.title = B.title + " ／ " + (B.englishTitle || "") + " — 対訳文庫";
 
@@ -27,15 +34,15 @@
   // ---- view buttons ----
   var hasOrig = orig && langs.indexOf(orig) >= 0 && orig !== "ja";
   var vb = "";
-  if (hasOrig) vb += '<button data-view="both">対訳</button>';
-  langs.forEach(function (c) { vb += '<button data-view="' + c + '">' + esc(label(c)) + '</button>'; });
+  if (hasOrig) vb += '<button type="button" data-view="both" aria-pressed="false">対訳</button>';
+  langs.forEach(function (c) { vb += '<button type="button" data-view="' + c + '" aria-pressed="false">' + esc(label(c)) + '</button>'; });
   document.getElementById("viewbtns").innerHTML = vb;
 
   // ---- download buttons (per language) ----
   var dw = document.getElementById("dl-wrap");
   if (dw) {
-    dw.innerHTML = '<span class="dl-label">⬇ 保存</span>' +
-      langs.map(function (c) { return '<button class="dl-btn" data-dl="' + c + '">' + esc(label(c)) + '</button>'; }).join("");
+    dw.innerHTML = '<span class="dl-label">テキスト保存</span>' +
+      langs.map(function (c) { return '<button type="button" class="dl-btn" data-dl="' + c + '">' + esc(label(c)) + '</button>'; }).join("");
     dw.querySelectorAll("[data-dl]").forEach(function (btn) {
       btn.addEventListener("click", function () { download(btn.getAttribute("data-dl")); });
     });
@@ -58,7 +65,8 @@
     p.paras.forEach(function (pr) {
       html += '<div class="para" data-idx="' + gi + '">';
       langs.forEach(function (c) {
-        html += '<div class="col lang-' + c + '" lang="' + c + '">' + esc(pr[c] || "") + '</div>';
+        html += '<div class="col lang-' + c + (B.format === "poetry" ? ' poem-lines' : '') + '" lang="' + c + '">' +
+          '<span class="column-label" aria-hidden="true">' + esc(label(c)) + '</span>' + esc(pr[c] || "") + '</div>';
       });
       html += '</div>';
       gi++;
@@ -84,7 +92,9 @@
       visible.map(function (c) { return "#reader .para .lang-" + c + "{display:block}"; }).join("\n");
     document.body.classList.toggle("solo", visible.length === 1);
     document.querySelectorAll("[data-view]").forEach(function (btn) {
-      btn.classList.toggle("active", btn.getAttribute("data-view") === v);
+      var active = btn.getAttribute("data-view") === v;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
     });
     safeSet("tb-view-" + bid, v);
   }
@@ -141,6 +151,8 @@
     ticking = true;
     requestAnimationFrame(function () {
       var y = window.scrollY;
+      var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      if (progressBar) progressBar.style.width = Math.min(100, Math.max(0, y / max * 100)) + "%";
       if (y <= 80 || y < lastY - 4) document.body.classList.remove("bar-hidden");
       else if (y > lastY + 6) document.body.classList.add("bar-hidden");
       lastY = y;
@@ -153,7 +165,7 @@
     if (!saved || saved < 2) return;
     var pill = document.createElement("div");
     pill.className = "resume-pill";
-    pill.innerHTML = '<button class="resume-go">🔖 前回の続きから読む</button><button class="resume-x" aria-label="閉じる">✕</button>';
+    pill.innerHTML = '<button class="resume-go" type="button">続きから読む</button><button class="resume-x" type="button" aria-label="閉じる">×</button>';
     document.body.appendChild(pill);
     pill.querySelector(".resume-go").addEventListener("click", function () {
       var el = document.querySelector('#reader .para[data-idx="' + saved + '"]');

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="10" fill="#f4f1ea"/>
+  <rect x="9" y="9" width="46" height="46" rx="3" fill="none" stroke="#1d1c19" stroke-width="2"/>
+  <path d="M32 10v44" stroke="#dcd7ce" stroke-width="1"/>
+  <text x="32" y="41" text-anchor="middle" font-family="serif" font-size="27" fill="#315f75">対</text>
+</svg>
+
