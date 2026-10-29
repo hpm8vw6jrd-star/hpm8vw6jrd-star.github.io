@@ -236,8 +236,23 @@ main.reader { max-width: var(--readingw); margin: 0 auto; padding: 42px 24px 112
 .para .col { min-width: 0; padding: 18px 30px; font-size: 1em; line-height: 2; overflow-wrap: anywhere; }
 .para .col:first-child { padding-left: 0; border-right: 1px solid var(--hairline); }
 .para .col:last-child { padding-right: 0; }
-#reader .col { display: none; }
+#reader .col { display: block; }
 .reader .poem-lines { white-space: pre-line; }
+.language-switch { color: var(--ink-secondary); font-size: 12px; text-decoration: none; white-space: nowrap; padding: 8px 0; }
+.reading-guide-link { max-width: var(--maxw); margin: 0 auto; padding: 24px; font-size: 14px; }
+.hero-index strong { overflow-wrap: anywhere; }
+.editorial-notes { max-width: 900px; margin: 0 auto; padding: 32px 24px; border-top: 1px solid var(--hairline); line-height: 1.9; }
+.editorial-notes h2 { font-family: var(--font-serif-ja); font-size: 24px; font-weight: 500; }
+.editorial-notes li { margin: 10px 0; }
+.editorial-notes [lang="en"] { font-family: var(--font-ui); color: var(--ink-secondary); }
+html[lang="en"] .work-head h1 { letter-spacing: 0; font-family: var(--font-serif-en); }
+html[lang="en"] .hero h1 { letter-spacing: -.02em; }
+html[lang="en"] .hero-title-line { white-space: normal; }
+html[lang="en"] .hero-copy, html[lang="en"] .hero-index { min-width: 0; }
+html[lang="en"] .hero-index p { grid-template-columns: 64px minmax(0, 1fr); }
+html[lang="en"] .hero-index small { grid-column: 2; }
+html[lang="en"] .ad-zone:not(:empty)::before { content: "Advertisement"; }
+@media (max-width: 600px) { .language-switch { font-size: 11px; } .home-page .brand-name small { display: none; } .topnav { gap: 12px; } }
 .para .lang-ja { color: var(--ink); font-family: var(--font-serif-ja); }
 .para .col:not(.lang-ja) { color: var(--en); font-family: var(--font-serif-en); font-size: .94em; line-height: 1.9; }
 .column-label { display: none; }

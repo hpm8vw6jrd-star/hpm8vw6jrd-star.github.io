@@ -4,6 +4,10 @@
 
 公開URL: <https://hpm8vw6jrd-star.github.io/>
 
+英語版: <https://hpm8vw6jrd-star.github.io/en/index.html>
+
+2026-10-29更新: 全55作品。日本語／英語の案内・蔵書検索と、全作品の英語読書UIに対応。原文を自動翻訳せず、対訳をそのまま保持します。全作品本文をHTMLにも収録し、JavaScriptが使えない場合も読めます。
+
 ## 収録作品
 
 - フランツ・カフカ『変身』
@@ -56,6 +60,11 @@
 - マーク・トウェイン『ある寓話』
 - マーク・トウェイン『悪い少年の物語』
 - マーク・トウェイン『善い少年の物語』
+- ケイト・ショパン『接吻』
+- ケイト・ショパン『熟したいちじく』
+- ケイト・ショパン『分別ある女』
+- ケイト・ショパン『一足の絹のストッキング』
+- マーク・トウェイン『よい子の女の子への忠告』
 
 ## 構成
 
@@ -89,6 +98,8 @@ taiyaku-bunko/
 
 ## 作品を追加する
 
+新規追加は散文のみ。詩は追加しません。公開済みの詩は維持します。
+
 1. `TRANSLATION.md` に従って全篇読解、文脈メモ、人物口調表、翻訳、四段階校正を行う。
 2. `<slug>.html` を既存作品から作り、固有の title / description / canonical / OGP / JSON-LD を設定する。
 3. `<slug>-data.js` に `window.BOOK` を置く。英語以外は原著言語を `origLangCode` に設定する。
@@ -104,6 +115,15 @@ taiyaku-bunko/
 - `sitemap.xml` に `lastmod` を記録。
 - 1200×630のOG画像、favicon、Web App Manifestを配信。
 - 作品名と作家名はJavaScript生成だけにせず、HTML本文にも保持する。
+- 日本語／英語の情報ページに相互のhreflangと固有canonicalを付与。
+- `locale.js` はUI切替のみ。文学本文は `translate="no"` で原文と日本語訳を保護する。
+- 新作は本文のほか、読む前の案内・訳注・関連作品へのリンクを掲載する。
+
+## 2026-10-29の公開と検証
+
+`release_20261029.cjs` は新作・英語版・静的本文を生成するローカル用ツールです。`sources_20261029.json` と `translations_20261029.json` を入力にします。`qa_20261029.cjs` は検索・英語操作・モバイル幅・JavaScript無効時の読書を確認します。公開対象は `release_manifest_20261029.json` に限定し、生成・検証ツールや作業用原文ファイルは公開しません。
+
+原文の取得記録と翻訳判断は `TRANSLATION_NOTES_051_055.md`、審査・集客の方針は `GROWTH_ADSENSE_20261029.md` を参照します。
 
 ## Google AdSense
 
