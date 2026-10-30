@@ -1,41 +1,51 @@
 /* 対訳リーダー（汎用） — 可変言語・表示切替・文字サイズ・多言語ダウンロード・しおり */
 (function () {
+  var UI = window.TBUI || { english: false, t: function (ja) { return ja; } };
+  function tr(ja, en) { return UI.t(ja, en); }
   var B = window.BOOK;
-  if (!B) { document.body.innerHTML = "<p style='padding:2rem'>データを読み込めませんでした。</p>"; return; }
+  if (!B) { return; } // Retain the complete static text if data fails to load.
 
-  var LANGNAME = { ja: "日本語", en: "英語", de: "ドイツ語", fr: "フランス語", zh: "中国語", ko: "韓国語", hi: "ヒンディー語" };
+  var LANGNAME = { ja: "日本語", en: "英語", de: "ドイツ語", fr: "フランス語", ru: "ロシア語", zh: "中国語", ko: "韓国語", hi: "ヒンディー語" };
+  if (UI.english) LANGNAME = {ja:'Japanese', en:'English', de:'German', fr:'French', ru:'Russian', zh:'Chinese', ko:'Korean', hi:'Hindi'};
   var langs = B.langs || Object.keys(B.parts[0].paras[0]);
   var orig = B.origLangCode;
   var bid = B.id || "x";
-  function label(code) { return code === orig ? "原文" : (LANGNAME[code] || code); }
+  function label(code) { return code === orig ? tr("原文", "Original (" + (LANGNAME[code] || code) + ")") : (LANGNAME[code] || code); }
 
-  document.title = B.title + " ／ " + (B.englishTitle || "") + " — 対訳文庫";
+  var progress = document.createElement("div");
+  progress.className = "reading-progress";
+  progress.setAttribute("aria-hidden", "true");
+  progress.innerHTML = '<span id="reading-progress-bar"></span>';
+  document.body.insertBefore(progress, document.body.firstChild);
+  var progressBar = document.getElementById("reading-progress-bar");
+
+  document.title = UI.english ? (B.englishTitle || B.originalTitle) + ' — Taiyaku Bunko' : B.title + " ／ " + (B.englishTitle || "") + " — 対訳文庫";
 
   // ---- header ----
   var creditLines = (B.sources || []).map(function (s) {
-    return esc(s.label) + ": " + esc(s.who) +
-      '（<a href="' + s.url + '" target="_blank" rel="noopener">' + esc(s.via) + '</a>）';
+    return esc(UI.english ? 'Source' : s.label) + ": " + esc(s.who) +
+      '（<a href="' + s.url + '" target="_blank" rel="noopener">' + esc(UI.english ? (s.viaEn || 'Source text') : s.via) + '</a>）';
   });
-  creditLines.push("日本語訳: 本サイト（AIの支援により作成）");
+  creditLines.push(tr("日本語訳: 本サイト（AIの支援により作成）", "Japanese translation: Taiyaku Bunko (prepared with AI assistance)"));
   document.getElementById("work-head").innerHTML =
     '<div class="eyebrow">' + esc(B.originalTitle || "") +
       (B.englishTitle && B.englishTitle !== B.originalTitle ? " &nbsp;·&nbsp; " + esc(B.englishTitle) : "") + '</div>' +
-    '<h1>' + esc(B.title) + '</h1>' +
-    '<div class="author">' + esc(B.author) + '</div>' +
+    '<h1>' + esc(UI.english ? (B.englishTitle || B.originalTitle) : B.title) + '</h1>' +
+    '<div class="author">' + esc(UI.english ? (B.authorEn || B.author) : B.author) + '</div>' +
     '<div class="credit">' + creditLines.join("<br>") + '</div>';
 
   // ---- view buttons ----
   var hasOrig = orig && langs.indexOf(orig) >= 0 && orig !== "ja";
   var vb = "";
-  if (hasOrig) vb += '<button data-view="both">対訳</button>';
-  langs.forEach(function (c) { vb += '<button data-view="' + c + '">' + esc(label(c)) + '</button>'; });
+  if (hasOrig) vb += '<button type="button" data-view="both" aria-pressed="false">' + tr('対訳', 'Parallel text') + '</button>';
+  langs.forEach(function (c) { vb += '<button type="button" data-view="' + c + '" aria-pressed="false">' + esc(label(c)) + '</button>'; });
   document.getElementById("viewbtns").innerHTML = vb;
 
   // ---- download buttons (per language) ----
   var dw = document.getElementById("dl-wrap");
   if (dw) {
-    dw.innerHTML = '<span class="dl-label">⬇ 保存</span>' +
-      langs.map(function (c) { return '<button class="dl-btn" data-dl="' + c + '">' + esc(label(c)) + '</button>'; }).join("");
+    dw.innerHTML = '<span class="dl-label">' + tr('テキスト保存', 'Download text') + '</span>' +
+      langs.map(function (c) { return '<button type="button" class="dl-btn" data-dl="' + c + '">' + esc(label(c)) + '</button>'; }).join("");
     dw.querySelectorAll("[data-dl]").forEach(function (btn) {
       btn.addEventListener("click", function () { download(btn.getAttribute("data-dl")); });
     });
@@ -44,7 +54,7 @@
   // ---- chapter nav (only if labelled parts) ----
   var labelled = B.parts.some(function (p) { return p.label; }) && B.parts.length > 1;
   document.getElementById("chapnav").innerHTML = labelled ? B.parts.map(function (p, i) {
-    return '<a href="#ch' + i + '">' + esc(p.label) + '</a>';
+    return '<a href="#ch' + i + '">' + esc(UI.english ? (p.labelEn || 'Part ' + (i+1)) : p.label) + '</a>';
   }).join("") : "";
 
   // ---- body ----
@@ -52,13 +62,14 @@
   B.parts.forEach(function (p, i) {
     html += '<section class="chapter" id="ch' + i + '">';
     if (p.label) {
-      html += '<h2 class="chapter-title"><span class="no">' + roman(i + 1) + '</span>' + esc(p.label) + '</h2>' +
+      html += '<h2 class="chapter-title"><span class="no">' + roman(i + 1) + '</span>' + esc(UI.english ? (p.labelEn || 'Part ' + (i+1)) : p.label) + '</h2>' +
         '<div class="chapter-rule"></div>';
     }
     p.paras.forEach(function (pr) {
       html += '<div class="para" data-idx="' + gi + '">';
       langs.forEach(function (c) {
-        html += '<div class="col lang-' + c + '" lang="' + c + '">' + esc(pr[c] || "") + '</div>';
+        html += '<div class="col lang-' + c + (B.format === "poetry" ? ' poem-lines' : '') + '" lang="' + c + '">' +
+          '<span class="column-label" aria-hidden="true">' + esc(label(c)) + '</span>' + esc(pr[c] || "") + '</div>';
       });
       html += '</div>';
       gi++;
@@ -84,7 +95,9 @@
       visible.map(function (c) { return "#reader .para .lang-" + c + "{display:block}"; }).join("\n");
     document.body.classList.toggle("solo", visible.length === 1);
     document.querySelectorAll("[data-view]").forEach(function (btn) {
-      btn.classList.toggle("active", btn.getAttribute("data-view") === v);
+      var active = btn.getAttribute("data-view") === v;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
     });
     safeSet("tb-view-" + bid, v);
   }
@@ -141,6 +154,8 @@
     ticking = true;
     requestAnimationFrame(function () {
       var y = window.scrollY;
+      var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      if (progressBar) progressBar.style.width = Math.min(100, Math.max(0, y / max * 100)) + "%";
       if (y <= 80 || y < lastY - 4) document.body.classList.remove("bar-hidden");
       else if (y > lastY + 6) document.body.classList.add("bar-hidden");
       lastY = y;
@@ -153,7 +168,7 @@
     if (!saved || saved < 2) return;
     var pill = document.createElement("div");
     pill.className = "resume-pill";
-    pill.innerHTML = '<button class="resume-go">🔖 前回の続きから読む</button><button class="resume-x" aria-label="閉じる">✕</button>';
+    pill.innerHTML = '<button class="resume-go" type="button">' + tr('続きから読む', 'Resume reading') + '</button><button class="resume-x" type="button" aria-label="' + tr('閉じる', 'Dismiss') + '">×</button>';
     document.body.appendChild(pill);
     pill.querySelector(".resume-go").addEventListener("click", function () {
       var el = document.querySelector('#reader .para[data-idx="' + saved + '"]');
